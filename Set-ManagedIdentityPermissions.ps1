@@ -27,17 +27,17 @@
 
 param
 (
-    [string]$managedIdentityName = "<nameHere>",
-    [string[]]$appPermissionsList = ("Device.Read.All","GroupMember.Read.All","Group.Read.All")
+    [string]$ManagedIdentityName = "<nameHere>",
+    [string[]]$AppPermissionsList = ("Device.Read.All","GroupMember.Read.All","Group.Read.All")
 )
 # Connect to Microsoft Graph with high privileges to be able to set the required permissions
 Connect-MgGraph -Scopes "Application.ReadWrite.All", "Directory.ReadWrite.All", "AppRoleAssignment.ReadWrite.All"
 # Get managed identity
-$managedIdentity = Get-MgServicePrincipal -Filter "displayName eq '$managedIdentityName'"
+$managedIdentity = Get-MgServicePrincipal -Filter "displayName eq '$ManagedIdentityName'"
 # Get Microsoft Graph service principal to be able to "copy" the required permissions from there
 $graphServicePrincipal = Get-MgServicePrincipal -Filter "appId eq '00000003-0000-0000-c000-000000000000'"  
 # Set the required permissions for the managed identity
-foreach ($appPermission in $appPermissionsList) 
+foreach ($appPermission in $AppPermissionsList) 
 {
     $appRole = $graphServicePrincipal.AppRoles | Where-Object { $_.Value -eq $appPermission -and $_.AllowedMemberTypes -contains "Application" } 
     $params = @{
